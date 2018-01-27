@@ -70,7 +70,7 @@
         },
         "dob": {
           "type": "string",
-          "format": "date",
+          "format": "datetime",
           "example": "yyyy/MM/dd",
           "description": "Users date of birth, formatted as yyyy/MM/dd",
           "pattern": "[0-9]{4}/[0-9]{2}/[0-9]{2}"

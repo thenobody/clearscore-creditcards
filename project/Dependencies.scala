@@ -4,6 +4,7 @@ object Dependencies {
   object Versions {
     val Akka = "2.5.9"
     val AkkaHttp = "10.0.11"
+    val Client = "1.0.0"
     val Logback = "1.2.3"
 
     val ScalaTest = "3.0.4"
@@ -13,6 +14,7 @@ object Dependencies {
 
   object Groups {
     val Akka = "com.typesafe.akka"
+    val Client = "net.thenobody.clearscore.client"
     val Slf4J = "org.slf4j"
   }
 
@@ -25,6 +27,11 @@ object Dependencies {
   lazy val slf4j = "org.slf4j" % "slf4j-api" % Versions.Slf4J
 
   lazy val typesafeConfig = "com.typesafe" % "config" % Versions.TypesafeConfig
+
+  // generated swagger code
+  lazy val csCards = Groups.Client %% "cscards-swagger" % Versions.Client
+  lazy val scoredCards = Groups.Client %% "scoredcards-swagger" % Versions.Client
+  lazy val microservice = Groups.Client %% "microservice-swagger" % Versions.Client
 
   // test scope
   lazy val scalaTest =  "org.scalatest" %% "scalatest" % Versions.ScalaTest % Test
@@ -40,8 +47,12 @@ object Dependencies {
     akka,
     akkaSlf4J,
     akkaHttp,
-    akkaHttpSpray
+    akkaHttpSpray,
+    microservice
   )
 
-  val CreditCardsCoreDeps = Seq()
+  val CreditCardsCoreDeps = Seq(
+    csCards,
+    scoredCards
+  )
 }
