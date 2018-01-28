@@ -55,6 +55,7 @@ object Dependencies {
     slf4j,
     typesafeConfig,
     scalaCheck,
+    scalaLogging,
     scalaTime,
     scalaTest
   )

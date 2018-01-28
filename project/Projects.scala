@@ -1,3 +1,4 @@
+import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
 import sbt._
 import sbt.Keys._
 
@@ -20,4 +21,5 @@ object Projects {
         "org.scala-lang" % "scala-reflect" % scalaVersion.value
       ) ++ Dependencies.CommonDeps ++ Dependencies.CreditCardsServiceDeps
     )
+    .enablePlugins(JavaAppPackaging)
 }
