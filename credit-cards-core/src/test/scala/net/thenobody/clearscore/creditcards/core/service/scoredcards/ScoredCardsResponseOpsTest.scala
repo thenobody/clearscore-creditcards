@@ -1,6 +1,6 @@
 package net.thenobody.clearscore.creditcards.core.service.scoredcards
 
-import net.thenobody.clearscore.client.scoredcardsswagger.model.{CreditCard => SCCreditCard}
+import net.thenobody.clearscore.creditcards.core.model.scoredcards.{CreditCard => SCCreditCard}
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{FlatSpec, Matchers}
 import net.thenobody.clearscore.creditcards.ModelGenerators._
@@ -11,7 +11,7 @@ class ScoredCardsResponseOpsTest extends FlatSpec with Matchers with PropertyChe
   behavior of classOf[ScoredCardsResponseOps].getSimpleName
 
   it should "convert a ScoredCardsResponse into a collection of CreditCard with correct score" in {
-    forAll(aCardName, anUri, anAPR, anApprovalRating, aStringList, aStringList) {
+    forAll(aCardName, aUri, anAPR, anApprovalRating, aStringList, aStringList) {
       (card, uri, apr, approvalRating, attributes, introductoryOffers) =>
         val score = approvalRating / 1.0 * math.pow(apr / 100.0, -2) / 100
         val scCreditCard = SCCreditCard(card, uri.toString, apr, approvalRating, attributes, introductoryOffers)

@@ -1,6 +1,6 @@
 package net.thenobody.clearscore.creditcards.core.service.scoredcards
 
-import net.thenobody.clearscore.client.scoredcardsswagger.model.CreditCard
+import net.thenobody.clearscore.creditcards.core.model.scoredcards.CreditCard
 import org.scalatest.{FlatSpec, Matchers}
 
 class CreditCardOpsTest extends FlatSpec with Matchers {

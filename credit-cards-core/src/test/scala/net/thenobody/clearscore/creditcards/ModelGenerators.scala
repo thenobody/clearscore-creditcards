@@ -3,7 +3,7 @@ package net.thenobody.clearscore.creditcards
 import java.net.URI
 
 import com.github.nscala_time.time.Imports._
-import net.thenobody.clearscore.creditcards.core.model.EmploymentStatus
+import net.thenobody.clearscore.creditcards.core.model.{CreditCard, EmploymentStatus}
 import org.scalacheck.Gen
 
 object ModelGenerators {
@@ -61,10 +61,18 @@ object ModelGenerators {
       .map(_.withMillisOfDay(0))
   def anEmploymentStatus: Gen[EmploymentStatus] =
     Gen.oneOf(EmploymentStatus.values)
+  def anEmploymentStatusString: Gen[String] =
+    Gen.oneOf(
+      "FULL_TIME",
+      "PART_TIME",
+      "STUDENT",
+      "UNEMPLOYED",
+      "RETIRED",
+    )
   def aCreditScore: Gen[Int] = Gen.choose(0, 700)
   def aSalary: Gen[Int] = Gen.choose(0, 10000)
   def aCardName: Gen[String] = Gen.alphaStr
-  def anUri: Gen[URI] = Gen.oneOf(
+  def aUri: Gen[URI] = Gen.oneOf(
     new URI("http://not-secure.local/path/to/resource"),
     new URI("https://secure.local:443/path/to/resource"),
     new URI("https://subdomain-of.secure.local/path/to/resource"),
@@ -72,6 +80,18 @@ object ModelGenerators {
   )
   def anApprovalRating: Gen[Double] = Gen.choose(0.0, 1.0)
   def anEligibilityRating: Gen[Double] = Gen.choose(0.0, 10.0)
+  def aCardScore: Gen[Double] = Gen.posNum[Double]
   def anAPR: Gen[Double] = Gen.choose(50.0, 100.0)
   def aStringList: Gen[List[String]] = Gen.listOf(Gen.alphaStr)
+
+  def aProvider: Gen[String] = Gen.oneOf("CSCards", "ScoredCards")
+
+  def aCreditCard: Gen[CreditCard] = for {
+    provider <- aProvider
+    name <- aCardName
+    applyUrl <- aUri
+    apr <- anAPR
+    features = Seq("asdasda")
+    cardScore <- aCardScore
+  } yield CreditCard(provider, name, applyUrl, apr, features, cardScore)
 }

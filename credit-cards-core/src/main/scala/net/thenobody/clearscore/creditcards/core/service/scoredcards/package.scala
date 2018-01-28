@@ -3,9 +3,10 @@ package service
 
 import java.net.URI
 
-import net.thenobody.clearscore.client.scoredcardsswagger.model.{ScoredCardsRequest, CreditCard => SCCreditCard}
-import net.thenobody.clearscore.client.scoredcardsswagger.model.ScoredCardsRequestEnums.{EmploymentStatus => SCEmploymentStatus}
-import net.thenobody.clearscore.creditcards.core.model.{CreditCard, EmploymentStatus, Request, Response}
+import net.thenobody.clearscore.creditcards.core.model.scoredcards.{CreditCard => SCCreditCard, _}
+import net.thenobody.clearscore.creditcards.core.model.scoredcards.ScoredCardsRequestEnums.{EmploymentStatus => SCEmploymentStatus}
+import net.thenobody.clearscore.creditcards.core.model._
+import spray.json._
 
 package object scoredcards {
 
@@ -43,6 +44,21 @@ package object scoredcards {
 
   implicit class CreditCardOps(self: SCCreditCard) {
     def normalisedScore: Double = (self.approvalRating / 1.0) * math.pow(1/self.annualPercentageRate, 2) * 100
+  }
+
+  object JsonProtocol extends DefaultJsonProtocol {
+    implicit val employmentStatusFormat: RootJsonFormat[SCEmploymentStatus] = new RootJsonFormat[SCEmploymentStatus] {
+      def write(obj: SCEmploymentStatus): JsValue = JsString(obj.toString)
+
+      override def read(json: JsValue): SCEmploymentStatus = json match {
+        case JsString(status) => SCEmploymentStatus.withName(status)
+      }
+    }
+
+    implicit val scoredCardsRequestFormat: RootJsonFormat[ScoredCardsRequest] =
+      jsonFormat(ScoredCardsRequest.apply, "first-name", "last-name", "date-of-birth", "score", "employment-status", "salary")
+    implicit val cardFormat: RootJsonFormat[SCCreditCard] =
+      jsonFormat(SCCreditCard.apply, "card", "apply-url", "annual-percentage-rate", "approval-rating", "attributes", "introductory-offers")
   }
 
 }

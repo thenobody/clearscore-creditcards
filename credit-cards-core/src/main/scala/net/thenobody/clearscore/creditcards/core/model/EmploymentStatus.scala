@@ -3,7 +3,7 @@ package net.thenobody.clearscore.creditcards.core.model
 import enumeratum._
 import EnumEntry._
 
-sealed trait EmploymentStatus extends EnumEntry with CapitalSnakecase
+sealed trait EmploymentStatus extends EnumEntry with UpperSnakecase
 
 object EmploymentStatus extends Enum[EmploymentStatus] {
   val values = findValues

@@ -1,8 +1,8 @@
 package net.thenobody.clearscore.creditcards.core.service.cscards
 
-import net.thenobody.clearscore.client.cscardsswagger.model.CardSearchRequest
 import net.thenobody.clearscore.creditcards.ModelGenerators._
 import net.thenobody.clearscore.creditcards.core.model.Request
+import net.thenobody.clearscore.creditcards.core.model.cscards.CardSearchRequest
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{FlatSpec, Matchers}
 

@@ -3,7 +3,7 @@ package service
 package api
 
 import net.thenobody.clearscore.creditcards.ModelGenerators._
-import net.thenobody.clearscore.creditcards.core.model.Request
+import net.thenobody.clearscore.creditcards.core.model.{EmploymentStatus, Request}
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{EitherValues, FlatSpec, Matchers}
 
@@ -16,31 +16,31 @@ class ApiRequestOpsTest
   behavior of classOf[ApiRequestOps].getSimpleName
 
   it should "convert an ApiRequest into a validated Request instance" in {
-    forAll(aFirstName, aLastName, aDate, anEmploymentStatus, aCreditScore, aSalary) {
+    forAll(aFirstName, aLastName, aDate, anEmploymentStatusString, aCreditScore, aSalary) {
       (firstName, lastName, date, employmentStatus, score, salary) =>
         val apiRequest = ApiRequest(firstName,
                                     lastName,
                                     date.toString("yyyy/MM/dd"),
                                     score,
-                                    employmentStatus.entryName,
+                                    employmentStatus,
                                     salary)
 
         val result = new ApiRequestOps(apiRequest).toRequest
         val expResult =
-          Request(firstName, lastName, date, score, employmentStatus, salary)
+          Request(firstName, lastName, date, score, EmploymentStatus.withName(employmentStatus), salary)
 
         result.right.value shouldEqual expResult
     }
   }
 
   it should "report on invalid date of birth" in {
-    forAll(aFirstName, aLastName, anEmploymentStatus, aCreditScore, aSalary) {
+    forAll(aFirstName, aLastName, anEmploymentStatusString, aCreditScore, aSalary) {
       (firstName, lastName, employmentStatus, score, salary) =>
         val apiRequest = ApiRequest(firstName,
                                     lastName,
                                     "INVALID",
                                     score,
-                                    employmentStatus.entryName,
+                                    employmentStatus,
                                     salary)
 
         val result = new ApiRequestOps(apiRequest).toRequest
@@ -60,24 +60,24 @@ class ApiRequestOpsTest
 
       val result = new ApiRequestOps(apiRequest).toRequest
 
-      result.left.value shouldEqual Errors.InvalidEmploymentStatus
+      result.left.value shouldEqual Errors.InvalidEmploymentStatus("INVALID")
     }
   }
 
   it should "report on invalid credit score" in {
-    forAll(aFirstName, aLastName, aDate, anEmploymentStatus, aSalary) {
+    forAll(aFirstName, aLastName, aDate, anEmploymentStatusString, aSalary) {
       (firstName, lastName, date, employmentStatus, salary) =>
         val apiRequest1 = ApiRequest(firstName,
                                      lastName,
                                      date.toString("yyyy/MM/dd"),
                                      -1,
-                                     employmentStatus.entryName,
+                                     employmentStatus,
                                      salary)
         val apiRequest2 = ApiRequest(firstName,
                                      lastName,
                                      date.toString("yyyy/MM/dd"),
                                      701,
-                                     employmentStatus.entryName,
+                                     employmentStatus,
                                      salary)
 
         val result1 = new ApiRequestOps(apiRequest1).toRequest
@@ -89,13 +89,13 @@ class ApiRequestOpsTest
   }
 
   it should "report on invalid salary" in {
-    forAll(aFirstName, aLastName, aDate, anEmploymentStatus, aCreditScore) {
+    forAll(aFirstName, aLastName, aDate, anEmploymentStatusString, aCreditScore) {
       (firstName, lastName, date, employmentStatus, score) =>
         val apiRequest = ApiRequest(firstName,
                                     lastName,
                                     date.toString("yyyy/MM/dd"),
                                     score,
-                                    employmentStatus.entryName,
+                                    employmentStatus,
                                     -1)
 
         val result = new ApiRequestOps(apiRequest).toRequest

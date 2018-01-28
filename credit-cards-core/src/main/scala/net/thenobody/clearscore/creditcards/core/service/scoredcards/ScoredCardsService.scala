@@ -2,12 +2,18 @@ package net.thenobody.clearscore.creditcards.core
 package service
 package scoredcards
 
-import net.thenobody.clearscore.client.scoredcardsswagger.model.ScoredCardsRequest
+import akka.actor.ActorSystem
+import net.thenobody.clearscore.creditcards.core.model.scoredcards._
 import net.thenobody.clearscore.creditcards.core.model.{CreditCard, Request}
 
-class ScoredCardsService(client: ScoredCardsRequest => ScoredCardsResponse) extends CardsService {
+import scala.concurrent.{ExecutionContext, Future}
 
-  def getCardsByRequest(request: Request): Seq[CreditCard] = {
-    ???
-  }
+class ScoredCardsService(
+    client: ScoredCardsRequest => Future[ScoredCardsResponse])(
+    implicit ec: ExecutionContext,
+    actorSystem: ActorSystem)
+    extends CardsService {
+
+  def getCardsByRequest(request: Request): Future[Seq[CreditCard]] =
+    client(request.toScoredCardsRequest).map(_.toResponse)
 }

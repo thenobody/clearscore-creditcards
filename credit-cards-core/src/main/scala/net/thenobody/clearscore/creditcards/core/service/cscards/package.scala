@@ -2,15 +2,9 @@ package net.thenobody.clearscore.creditcards.core.service
 
 import java.net.URI
 
-import net.thenobody.clearscore.client.cscardsswagger.model.{
-  Card,
-  CardSearchRequest
-}
-import net.thenobody.clearscore.creditcards.core.model.{
-  CreditCard,
-  Request,
-  Response
-}
+import net.thenobody.clearscore.creditcards.core.model.{Request, Response, CreditCard}
+import net.thenobody.clearscore.creditcards.core.model.cscards._
+import spray.json._
 
 package object cscards {
 
@@ -41,6 +35,12 @@ package object cscards {
   implicit class CardOps(self: Card) {
     def normalisedScore: Double =
       (self.eligibility / 10.0) * math.pow(1 / self.apr, 2) * 100
+  }
+
+  object JsonProtocol extends DefaultJsonProtocol {
+    implicit val cardSearchRequestFormat: RootJsonFormat[CardSearchRequest] =
+      jsonFormat3(CardSearchRequest.apply)
+    implicit val cardFormat: RootJsonFormat[Card] = jsonFormat5(Card.apply)
   }
 
 }

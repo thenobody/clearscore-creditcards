@@ -1,11 +1,9 @@
 package net.thenobody.clearscore.creditcards.service
 
-import cats.syntax.either._
-import net.thenobody.clearscore.creditcards.core.model.{
-  EmploymentStatus,
-  Request
-}
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import com.github.nscala_time.time.Imports._
+import net.thenobody.clearscore.creditcards.core.model.{CreditCard, EmploymentStatus, Request}
+import spray.json._
 
 import scala.util.Try
 
@@ -13,7 +11,11 @@ package object api {
 
   type Result[T] = Either[Error, T]
 
+  type ApiResponse = Seq[ApiCreditCard]
+
   implicit class ApiRequestOps(request: ApiRequest) {
+    import cats.syntax.either._
+
     def toRequest: Either[Error, Request] =
       for {
         dateOfBirth <- validDateOfBirth
@@ -34,7 +36,7 @@ package object api {
       }.toEither.leftMap(_ => Errors.InvalidDateOfBirth)
 
     def validEmploymentStatus: Result[EmploymentStatus] =
-      Either.fromOption(EmploymentStatus.withNameOption(request.employmentStatus), Errors.InvalidEmploymentStatus)
+      Either.fromOption(EmploymentStatus.withNameOption(request.employmentStatus), Errors.InvalidEmploymentStatus(request.employmentStatus))
 
     def validScore: Result[Int] = request.score match {
       case s if s >= 0 && s <= 700 => Right(s)
@@ -47,12 +49,30 @@ package object api {
     }
   }
 
+  implicit class CreditCardOps(self: CreditCard) {
+    def toApiCreditCard: ApiCreditCard = ApiCreditCard(
+      provider = self.provider,
+      name = self.name,
+      applyUrl = self.applyUrl.toString,
+      apr = BigDecimal(self.apr).setScale(2, BigDecimal.RoundingMode.HALF_UP),
+      features = self.features,
+      cardScore = BigDecimal(self.cardScore).setScale(3, BigDecimal.RoundingMode.HALF_UP)
+    )
+  }
+
   sealed trait Error
   object Errors {
-    case object InvalidEmploymentStatus extends Error
+    case class InvalidEmploymentStatus(invalid: String) extends Error
     case object InvalidDateOfBirth extends Error
     case object InvalidCreditScore extends Error
     case object InvalidSalary extends Error
+  }
+
+  object JsonProtocol extends SprayJsonSupport with DefaultJsonProtocol {
+    implicit val apiRequestFormat: RootJsonFormat[ApiRequest] =
+      jsonFormat(ApiRequest.apply, "firstname", "lastname", "dob", "credit-score", "employment-status", "salary")
+    implicit val apiCreditCardFormat: RootJsonFormat[ApiCreditCard] =
+      jsonFormat(ApiCreditCard.apply, "provider", "name", "apply-url", "apr", "features", "card-score")
   }
 
 }

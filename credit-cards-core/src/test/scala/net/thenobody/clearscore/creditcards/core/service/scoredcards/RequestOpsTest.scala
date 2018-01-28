@@ -3,10 +3,10 @@ package net.thenobody.clearscore.creditcards.core.service.scoredcards
 import net.thenobody.clearscore.creditcards.ModelGenerators._
 import net.thenobody.clearscore.creditcards.core.model.{EmploymentStatus, Request}
 import net.thenobody.clearscore.creditcards.core.model.EmploymentStatus._
+import net.thenobody.clearscore.creditcards.core.model.scoredcards.ScoredCardsRequest
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{FlatSpec, Matchers}
-import net.thenobody.clearscore.client.scoredcardsswagger.model.ScoredCardsRequest
-import net.thenobody.clearscore.client.scoredcardsswagger.model.ScoredCardsRequestEnums.{EmploymentStatus => SCEmploymentStatus}
+import net.thenobody.clearscore.creditcards.core.model.scoredcards.ScoredCardsRequestEnums.{EmploymentStatus => SCEmploymentStatus}
 
 class RequestOpsTest extends FlatSpec with Matchers with PropertyChecks {
 
