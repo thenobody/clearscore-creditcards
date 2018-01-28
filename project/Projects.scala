@@ -10,7 +10,7 @@ object Projects {
 
   lazy val creditCardsService = Project("credit-cards-service", file("credit-cards-service"))
     .settings(Common.commonSettings)
-    .dependsOn(creditCardsCore)
+    .dependsOn(creditCardsCore % "compile->compile;test->test")
     .settings(
       libraryDependencies ++= Dependencies.CommonDeps ++ Dependencies.CreditCardsServiceDeps
     )

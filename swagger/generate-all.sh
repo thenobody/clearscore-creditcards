@@ -20,6 +20,8 @@ function generate_client {
 
     swagger-codegen generate -l akka-scala -i $JSON_PATH -o $OUTPUT_DIR/$ARTIFACT \
       --group-id $GROUP_ID \
+      --api-package $PACKAGE.api \
+      --model-package $PACKAGE.model \
       --artifact-id $ARTIFACT
 
     cd $OUTPUT_DIR/$ARTIFACT
