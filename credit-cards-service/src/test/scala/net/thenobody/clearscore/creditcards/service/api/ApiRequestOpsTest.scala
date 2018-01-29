@@ -2,7 +2,7 @@ package net.thenobody.clearscore.creditcards
 package service
 package api
 
-import net.thenobody.clearscore.creditcards.ModelGenerators._
+import ExtraGenerators._
 import net.thenobody.clearscore.creditcards.core.model.{EmploymentStatus, Request}
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{EitherValues, FlatSpec, Matchers}
@@ -29,57 +29,30 @@ class ApiRequestOpsTest
         val expResult =
           Request(firstName, lastName, date, score, EmploymentStatus.withName(employmentStatus), salary)
 
-        result.right.value shouldEqual expResult
+      result.right.value shouldEqual expResult
     }
   }
 
   it should "report on invalid date of birth" in {
-    forAll(aFirstName, aLastName, anEmploymentStatusString, aCreditScore, aSalary) {
-      (firstName, lastName, employmentStatus, score, salary) =>
-        val apiRequest = ApiRequest(firstName,
-                                    lastName,
-                                    "INVALID",
-                                    score,
-                                    employmentStatus,
-                                    salary)
-
-        val result = new ApiRequestOps(apiRequest).toRequest
+    forAll(anApiRequest) { apiRequest =>
+        val result = new ApiRequestOps(apiRequest.copy(dob = "INVALID")).toRequest
 
         result.left.value shouldEqual Errors.InvalidDateOfBirth
     }
   }
 
   it should "report on invalid employment status" in {
-    forAll(aFirstName, aLastName, aDate, aCreditScore, aSalary) { (firstName, lastName, date, score, salary) =>
-      val apiRequest = ApiRequest(firstName,
-                                  lastName,
-                                  date.toString("yyyy/MM/dd"),
-                                  score,
-                                  "INVALID",
-                                  salary)
-
-      val result = new ApiRequestOps(apiRequest).toRequest
+    forAll(anApiRequest) { apiRequest =>
+      val result = new ApiRequestOps(apiRequest.copy(employmentStatus = "INVALID")).toRequest
 
       result.left.value shouldEqual Errors.InvalidEmploymentStatus("INVALID")
     }
   }
 
   it should "report on invalid credit score" in {
-    forAll(aFirstName, aLastName, aDate, anEmploymentStatusString, aSalary) {
-      (firstName, lastName, date, employmentStatus, salary) =>
-        val apiRequest1 = ApiRequest(firstName,
-                                     lastName,
-                                     date.toString("yyyy/MM/dd"),
-                                     -1,
-                                     employmentStatus,
-                                     salary)
-        val apiRequest2 = ApiRequest(firstName,
-                                     lastName,
-                                     date.toString("yyyy/MM/dd"),
-                                     701,
-                                     employmentStatus,
-                                     salary)
-
+    forAll(anApiRequest) { apiRequest =>
+        val apiRequest1 = apiRequest.copy(score = -1)
+        val apiRequest2 = apiRequest.copy(score = 701)
         val result1 = new ApiRequestOps(apiRequest1).toRequest
         val result2 = new ApiRequestOps(apiRequest2).toRequest
 
@@ -89,16 +62,8 @@ class ApiRequestOpsTest
   }
 
   it should "report on invalid salary" in {
-    forAll(aFirstName, aLastName, aDate, anEmploymentStatusString, aCreditScore) {
-      (firstName, lastName, date, employmentStatus, score) =>
-        val apiRequest = ApiRequest(firstName,
-                                    lastName,
-                                    date.toString("yyyy/MM/dd"),
-                                    score,
-                                    employmentStatus,
-                                    -1)
-
-        val result = new ApiRequestOps(apiRequest).toRequest
+    forAll(anApiRequest) { apiRequest =>
+        val result = new ApiRequestOps(apiRequest.copy(salary = -1)).toRequest
 
         result.left.value shouldEqual Errors.InvalidSalary
     }

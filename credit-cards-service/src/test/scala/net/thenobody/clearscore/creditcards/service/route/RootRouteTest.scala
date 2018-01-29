@@ -1,19 +1,19 @@
 package net.thenobody.clearscore.creditcards.service.route
 
 import akka.http.scaladsl.model.StatusCodes
-import com.github.nscala_time.time.Imports._
 import akka.http.scaladsl.testkit.ScalatestRouteTest
+import com.github.nscala_time.time.Imports._
 import net.thenobody.clearscore.creditcards.core.model.{CreditCard, EmploymentStatus, Request}
 import net.thenobody.clearscore.creditcards.core.service.CardsService
-import net.thenobody.clearscore.creditcards.service.api.{ApiCreditCard, ApiRequest}
+import net.thenobody.clearscore.creditcards.service.ExtraGenerators._
+import net.thenobody.clearscore.creditcards.service.api.ApiCreditCard
+import net.thenobody.clearscore.creditcards.service.api.JsonProtocol._
 import org.scalacheck.Gen
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{FlatSpec, Matchers}
+import spray.json._
 
 import scala.concurrent.Future
-import net.thenobody.clearscore.creditcards.ModelGenerators._
-import net.thenobody.clearscore.creditcards.service.api.JsonProtocol._
-import spray.json._
 
 class RootRouteTest
     extends FlatSpec
@@ -22,15 +22,6 @@ class RootRouteTest
     with PropertyChecks {
 
   behavior of classOf[RootRoute].getSimpleName
-
-  val anApiRequest: Gen[ApiRequest] = for {
-    firstName <- aFirstName
-    lastName <- aLastName
-    dateOfBirth <- aDate.map(_.toString("yyyy/MM/dd"))
-    creditScore <- aCreditScore
-    employmentStatus <- anEmploymentStatus
-    salary <- aSalary
-  } yield ApiRequest(firstName, lastName, dateOfBirth, creditScore, employmentStatus.entryName, salary)
 
   it should "retrieve empty credit cards list" in {
     forAll(anApiRequest) { apiRequest =>

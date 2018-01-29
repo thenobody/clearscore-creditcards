@@ -6,7 +6,7 @@ import com.github.nscala_time.time.Imports._
 import net.thenobody.clearscore.creditcards.core.model.{CreditCard, EmploymentStatus}
 import org.scalacheck.Gen
 
-object ModelGenerators {
+trait ModelGenerators {
 
   def aFirstName: Gen[String] = Gen.oneOf(
     "Leota",
@@ -95,3 +95,5 @@ object ModelGenerators {
     cardScore <- aCardScore
   } yield CreditCard(provider, name, applyUrl, apr, features, cardScore)
 }
+
+object ModelGenerators extends ModelGenerators
