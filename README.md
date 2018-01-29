@@ -1,5 +1,19 @@
 # ClearScore Credit Card service
 
+Table of Contents
+=================
+
+   * [Build](#build)
+      * [Tests](#tests)
+   * [Running](#running)
+   * [Configuration](#configuration)
+      * [1. ENV variables](#1-env-variables)
+      * [2. Config file](#2-config-file)
+   * [Implementation notes](#implementation-notes)
+      * [credit-cards-core](#credit-cards-core)
+      * [credit-cards-service](#credit-cards-service)
+
+
 ## Build
 To prepare the service for deploy/run execute the following:
 
